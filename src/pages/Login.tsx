@@ -27,8 +27,6 @@ const Login = () => {
 
     if (error) {
       alert(error.message);
-    } else {
-      alert("Check your email for the login link!");
     }
     setLoading(false);
   };

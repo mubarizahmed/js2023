@@ -15,7 +15,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { supabase } from "@/supabaseClient";
 import { AuthSession } from "@supabase/supabase-js";
 
-
 const Rollcall = ({ session }: { session: AuthSession }) => {
   const [result, setResult] = useState("");
   const [meal, setMeal] = useState("");
@@ -123,7 +122,11 @@ const Rollcall = ({ session }: { session: AuthSession }) => {
           type="single"
           value={meal}
           onValueChange={(value) => {
-            if (value) setMeal(value);
+            if (value) {
+              setMeal(value);
+              setStatus(0);
+              setResult("");
+            }
           }}
         >
           <ToggleGroupItem value="Breakfast">B</ToggleGroupItem>
