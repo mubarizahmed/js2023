@@ -1,5 +1,5 @@
 import React from 'react';
-import reactLogo from '../assets/react.svg'
+import amjLogo from '../assets/amj.svg'
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { MdDarkMode } from "react-icons/md";
@@ -11,7 +11,7 @@ const Navbar = () => {
     <div className="navbar flex flex-row w-full justify-between items-center p-2 pl-4 pr-4">
       <div className="navbar-left">
         <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo h-10 p-2" alt="React logo" />
+          <img src={amjLogo} className="logo h-10 p-2" alt="React logo" />
         </a>
       </div>
       <div className="navbar-center flex flex-row gap-2">

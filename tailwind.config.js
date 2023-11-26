@@ -50,6 +50,9 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        warning: "hsl(var(--warning))",
+        success: "hsl(var(--success))",
+        error: "hsl(var(--error))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -73,4 +76,10 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
+  purge: {
+    // content: ['./src/**/*.html'],
+    options: {
+      safelist: ['bg-warning', 'bg-success', 'bg-error'],
+    },
+  },
 }
