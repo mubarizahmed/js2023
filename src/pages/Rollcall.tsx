@@ -6,7 +6,7 @@ const Rollcall = () => {
   const [result, setResult] = useState("");
   const {
     ref,
-    torch: { on, off, isOn, isAvailable },
+    torch: { on, off },
   } = useZxing({
     onDecodeResult(result) {
       setResult(result.getText());
@@ -25,10 +25,10 @@ const Rollcall = () => {
           variant="outline"
           size="icon"
           className="absolute bottom-4 right-4 bg-white rounded-full p-2 shadow-lg"
-          onClick={() => (isOn ? off() : on())}
-          disabled={!isAvailable}
+          onClick={() => (on ? off() : on())}
+          // disabled={!isAvailable}
         >
-          {isOn ? "🔦" : "🔅"}
+          {on ? "🔦" : "🔅"}
         </Button>
       </div>
 
