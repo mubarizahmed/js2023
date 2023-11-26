@@ -12,11 +12,11 @@ import { MdCalendarMonth } from "react-icons/md";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Session } from "@supabase/gotrue-js";
 import { supabase } from "@/supabaseClient";
+import { AuthSession } from "@supabase/supabase-js";
 
 
-const Rollcall = (session: Session) => {
+const Rollcall = ({ session }: { session: AuthSession }) => {
   const [result, setResult] = useState("");
   const [meal, setMeal] = useState("");
   const [date, setDate] = React.useState<Date>();

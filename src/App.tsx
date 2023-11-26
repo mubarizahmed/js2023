@@ -4,9 +4,10 @@ import Navbar from "./components/Navbar.tsx";
 import Rollcall from "./pages/Rollcall.tsx";
 import Login from "./pages/Login.tsx";
 import { supabase } from "./supabaseClient.ts";
+import { AuthSession } from "@supabase/supabase-js";
 
 function App() {
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState<AuthSession>(null);
 
   // set dark theme on page load
   document.body.classList.add("dark");
@@ -30,7 +31,7 @@ function App() {
       ) : (
         <>
           <Navbar />
-          <Rollcall key={session.user.id} session={session}/>
+          <Rollcall session={session}/>
         </>
       )}
     </>
