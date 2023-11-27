@@ -33,7 +33,7 @@ function App() {
         <Login />
       ) : (
         <>
-          <Navbar />
+          <Navbar session={session}/>
           <Routes>
             <Route path="/" element={<Rollcall session={session} />} />
             <Route path="/registration" element={<Registration />} />
