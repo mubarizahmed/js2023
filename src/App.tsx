@@ -3,8 +3,11 @@ import "./App.css";
 import Navbar from "./components/Navbar.tsx";
 import Rollcall from "./pages/Rollcall.tsx";
 import Login from "./pages/Login.tsx";
+import Registration from "./pages/Registration.tsx";
 import { supabase } from "./supabaseClient.ts";
 import { AuthSession } from "@supabase/supabase-js";
+import { Routes, Route } from "react-router-dom";
+import { Toaster } from "@/components/ui/toaster"
 
 function App() {
   const [session, setSession] = useState<AuthSession>(null);
@@ -31,9 +34,13 @@ function App() {
       ) : (
         <>
           <Navbar />
-          <Rollcall session={session}/>
+          <Routes>
+            <Route path="/" element={<Rollcall session={session} />} />
+            <Route path="/registration" element={<Registration />} />
+          </Routes>
         </>
       )}
+              <Toaster />
     </>
   );
 }
