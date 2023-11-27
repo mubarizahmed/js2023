@@ -93,7 +93,7 @@ const Rollcall = () => {
 
   const {
     ref,
-    torch: { on, off },
+    torch: { on, off, isAvailable, isOn},
   } = useZxing({
     onDecodeResult(res) {
       if (res.getText() == result) return;
@@ -229,23 +229,25 @@ const Rollcall = () => {
           ref={ref}
           className="max-h-[70vh] w-fit rounded-xl border border-border overflow-hidden"
         />
-        {/* </div> */}
-        {/* absolutely postioned button on top of video */}
+
+
+        {isAvailable ? (
         <Button
           variant="outline"
           size="icon"
-          className="absolute bottom-4 right-4"
-          onClick={() => (on ? off() : on())}
+          className="absolute bottom-16 right-4"
+          onClick={() => (isOn ? off() : on())}
           // disabled={!isAvailable}
         >
-          {on ? "🔦" : "🔅"}
+          {isOn ? "🔦" : "🔅"}
         </Button>
+        ) : ""}
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button
               variant="outline"
               size="icon"
-              className="absolute bottom-16 right-4"
+              className="absolute bottom-4 right-4"
             >
               #
             </Button>
