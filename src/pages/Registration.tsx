@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -26,7 +26,6 @@ import { supabase } from "@/supabaseClient";
 import { MdOutlinePeople } from "react-icons/md";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
-
 const FormSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
@@ -51,7 +50,10 @@ const FormSchema = z.object({
 });
 
 const Registration = () => {
+  const [loaded, setLoaded] = useState(false);
   const [men, setMen] = useState(true);
+  const [stats, setStats] = useState([]);
+  const [regionStats, setRegionStats] = useState([]);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -105,6 +107,37 @@ const Registration = () => {
       form.reset();
     }
   }
+
+  async function getStats() {
+    const { data, error } = await supabase
+      .from("attendance_summary")
+      .select("*");
+
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data);
+      setStats(data);
+    }
+
+    const { data: regionData, error: regionError } = await supabase
+      .from("region_summary")
+      .select("*");
+
+    if (regionError) {
+      console.log(regionError);
+    } else {
+      console.log(regionData);
+      setRegionStats(regionData);
+    }
+  }
+
+  useEffect(() => {
+    if (!loaded) {
+      getStats();
+      setLoaded(true);
+    }
+  }, [loaded]);
 
   return (
     <div className="flex flex-col w-full h-full gap-4 p-8 items-center">
@@ -273,23 +306,48 @@ const Registration = () => {
           </span>
         </div>
       </div>
-      <div className="w-full flex flex-row flex-wrap items-center justify-around gap-4">
+      <div className="w-full flex flex-row flex-wrap items-start justify-around gap-4">
         <Card className="flex grow flex-col items-start">
           <CardHeader className="flex w-full flex-row items-center gap-2 justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Attendance</CardTitle>
             <MdOutlinePeople />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1,756</div>
+          <CardContent className="w-full flex flex-col gap-4">
+            <div className="text-2xl font-bold">
+              {stats.reduce((total, stat) => total + stat.num_attendees, 0)}
+            </div>
+            <div className="grid w-full grid-cols-2 gap-2">
+              {stats.map((stat) => (
+                <div
+                  key={stat.org}
+                  className="flex flex-row border items-start justify-between p-2 rounded-md"
+                >
+                  <div className="text-sm font-medium">{stat.org}</div>
+                  <div className="text-sm font-medium">
+                    {stat.num_attendees}
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
-        <Card className="flex grow flex-col items-start">
+        <Card className="flex grow flex-col items-start gap-4">
           <CardHeader className="flex w-full flex-row items-center gap-2 justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Attendance</CardTitle>
+            <CardTitle className="text-sm font-medium">By Region</CardTitle>
             <MdOutlinePeople />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1,756</div>
+          <CardContent className="flex flex-col w-full gap-2 items-stretch">
+            {regionStats.map((stat) => (
+              <div
+                key={stat.region}
+                className="flex flex-row border items-center justify-between p-2 rounded-md"
+              >
+                <div className="text-sm font-medium">{stat.region}</div>
+                <div className="text-sm font-medium">
+                  {stat.num_attendees}
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
       </div>
