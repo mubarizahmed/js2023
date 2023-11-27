@@ -35,8 +35,8 @@ function App() {
         <>
           <Navbar session={session} />
           <Routes>
-            <Route path="/" element={<Rollcall session={session} />} />
-            <Route path="/registration" element={<Registration session={session}/>} />
+            <Route path="/" element={<Rollcall />} />
+            <Route path="/registration" element={<Registration/>} />
           </Routes>
         </>
       )}

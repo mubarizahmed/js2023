@@ -13,11 +13,9 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { supabase } from "@/supabaseClient";
-import { AuthSession } from "@supabase/supabase-js";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -40,7 +38,7 @@ const dateToSupabaseString = (date: Date) => {
   );
 };
 
-const Rollcall = ({ session }: { session: AuthSession }) => {
+const Rollcall = () => {
   const [result, setResult] = useState("");
   const [meal, setMeal] = useState("");
   const [date, setDate] = React.useState<Date>();
@@ -157,7 +155,7 @@ const Rollcall = ({ session }: { session: AuthSession }) => {
   }, [meal, date]);
 
   useEffect(() => {
-    console.log(session.user);
+    // console.log(session.user);
     if (meal == "") {
       // get the time of the day
       const now = new Date();

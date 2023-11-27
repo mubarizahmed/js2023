@@ -1,5 +1,4 @@
-import { AuthSession } from "@supabase/supabase-js";
-import React from "react";
+import React, { useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -25,6 +24,7 @@ import {
 } from "@/components/ui/card";
 import { supabase } from "@/supabaseClient";
 import { MdOutlinePeople } from "react-icons/md";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 
 const FormSchema = z.object({
@@ -37,6 +37,9 @@ const FormSchema = z.object({
   region: z.string().min(2, {
     message: "Region must be at least 2 characters.",
   }),
+  org: z.string().min(2, {
+    message: "Organization must be at least 2 characters.",
+  }),
   id: z.coerce
     .number()
     .min(1, {
@@ -47,13 +50,15 @@ const FormSchema = z.object({
     }),
 });
 
-const Registration = ({ session }: { session: AuthSession }) => {
+const Registration = () => {
+  const [men, setMen] = useState(true);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
       jamaat: "",
       region: "",
+      org: "",
       id: 0,
     },
   });
@@ -65,6 +70,7 @@ const Registration = ({ session }: { session: AuthSession }) => {
         name: data.name,
         jamaat: data.jamaat,
         region: data.region,
+        org: data.org,
         id: data.id,
       },
     ]);
@@ -103,9 +109,21 @@ const Registration = ({ session }: { session: AuthSession }) => {
   return (
     <div className="flex flex-col w-full h-full gap-4 p-8 items-center">
       <Card className="w-full flex flex-col items-start">
-        <CardHeader className="w-full flex flex-col items-start">
-          <CardTitle>Registration</CardTitle>
-          <CardDescription>Register new Jalsa attendee.</CardDescription>
+        <CardHeader className="w-full flex flex-row justify-between items-center">
+          <div className="flex flex-col items-start">
+            <CardTitle>Registration</CardTitle>
+            <CardDescription>Register new Jalsa attendee.</CardDescription>
+          </div>
+          <ToggleGroup
+            type="single"
+            value={men ? "m" : "f"}
+            onValueChange={(val) => {
+              setMen(val == "m");
+            }}
+          >
+            <ToggleGroupItem value="m">M</ToggleGroupItem>
+            <ToggleGroupItem value="f">F</ToggleGroupItem>
+          </ToggleGroup>
         </CardHeader>
         <CardContent className="w-full flex flex-col items-start">
           <Form {...form}>
@@ -164,6 +182,54 @@ const Registration = ({ session }: { session: AuthSession }) => {
                           placeholder="Region"
                           {...field}
                         />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="org"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex justify-between flex-wrap items-baseline gap-4 w-full">
+                      <FormLabel className="w-14 text-left">Org</FormLabel>
+                      <FormControl>
+                        {men ? (
+                          <ToggleGroup
+                            variant="outline"
+                            type="single"
+                            className=""
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <ToggleGroupItem value="Ansar">
+                              Ansar
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="Khuddam">
+                              Khuddam
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="Atfal">
+                              Atfal
+                            </ToggleGroupItem>
+                          </ToggleGroup>
+                        ) : (
+                          <ToggleGroup
+                            variant="outline"
+                            type="single"
+                            className=""
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <ToggleGroupItem value="Lajna">
+                              Lajna
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="Nasirat">
+                              Nasirat
+                            </ToggleGroupItem>
+                          </ToggleGroup>
+                        )}
                       </FormControl>
                     </div>
                     <FormMessage />
