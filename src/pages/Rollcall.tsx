@@ -31,6 +31,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import useSound from 'use-sound';
+import beep from "../assets/beep.mp3";
+import doublebeep from "../assets/doublebeep.mp3";
 
 const dateToSupabaseString = (date: Date) => {
   return (
@@ -46,6 +49,8 @@ const Rollcall = () => {
   const [served, setServed] = useState(0);
   const [attendees, setAttendees] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [playBeep] = useSound(beep);
+  const [playDoubleBeep] = useSound(doublebeep);
   const statusData = [
     {
       icon: "🔍",
@@ -119,6 +124,7 @@ const Rollcall = () => {
       },
     ]);
     if (error) {
+      playDoubleBeep();
       console.log(error);
       if (error.code == "23505") {
         setStatus(4);
@@ -128,6 +134,7 @@ const Rollcall = () => {
         setStatus(6);
       }
     } else {
+      playBeep();
       setStatus(2);
       getServed();
     }
