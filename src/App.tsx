@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/toaster";
 
 function App() {
   const [session, setSession] = useState<AuthSession>(null);
+  const [admin, setAdmin] = useState(false);
 
   // set dark theme on page load
   document.body.classList.add("dark");
@@ -19,6 +20,16 @@ function App() {
     console.log("connecting");
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log(session);
+
+      supabase.from("users").select("*").then(( {data, error} ) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(data);
+          setAdmin(data[0].admin)
+        }
+      })
+
       setSession(session);
     });
 
@@ -33,10 +44,10 @@ function App() {
         <Login />
       ) : (
         <>
-          <Navbar session={session} />
+          <Navbar session={session} admin={admin} />
           <Routes>
             <Route path="/" element={<Rollcall />} />
-            <Route path="/registration" element={<Registration/>} />
+            {admin ? <Route path="/registration" element={<Registration/>} /> : ""}
           </Routes>
         </>
       )}

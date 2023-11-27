@@ -275,7 +275,7 @@ const Registration = () => {
                 render={({ field }) => (
                   <FormItem>
                     <div className="flex justify-between flex-wrap items-baseline gap-4 w-full">
-                      <FormLabel className="w-14 text-left">ID</FormLabel>
+                      <FormLabel className="w-14 text-left">Reg No.</FormLabel>
                       <FormControl>
                         <Input
                           className=" grow min-w-[12rem] w-fit"

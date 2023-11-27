@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { supabase } from "@/supabaseClient";
 
-const Navbar = ({ session }: { session: AuthSession }) => {
+const Navbar = ({ session, admin }: { session: AuthSession; admin: boolean }) => {
 
 
   return (
@@ -30,9 +30,9 @@ const Navbar = ({ session }: { session: AuthSession }) => {
           </NavLink>
         </div>
         <div className="navbar-center flex flex-row gap-2">
-          <NavLink to="/registration">
+{ admin ?         <NavLink to="/registration">
             {({ isActive }) => <Toggle pressed={isActive}>Registration</Toggle>}
-          </NavLink>
+          </NavLink> : ""}
           <NavLink to="/">
             {({ isActive }) => <Toggle pressed={isActive}>Meals</Toggle>}
           </NavLink>

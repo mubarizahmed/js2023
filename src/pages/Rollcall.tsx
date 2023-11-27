@@ -44,6 +44,7 @@ const Rollcall = () => {
   const [date, setDate] = React.useState<Date>();
   const [status, setStatus] = useState(0);
   const [served, setServed] = useState(0);
+  const [attendees, setAttendees] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
   const statusData = [
     {
@@ -145,6 +146,15 @@ const Rollcall = () => {
     } else {
       console.log(data);
       setServed(data.length);
+    }
+
+    const {count: attendeeData, error: attendeeError} = await supabase.from("attendees").select("*", {count: "exact", head: false});
+
+    if (attendeeError) {
+      console.log(attendeeError);
+    } else {
+      console.log(attendeeData);
+      setAttendees(attendeeData);
     }
   };
 
@@ -300,7 +310,7 @@ const Rollcall = () => {
           </CardHeader>
           <CardContent className="flex flex-row w-full items-center justify-between gap-2">
             <div className="text-2xl font-bold">{served}</div>
-            <div className="text-2xl text-muted-foreground">{"/" + 1754}</div>
+            <div className="text-2xl text-muted-foreground">{"/" + attendees}</div>
             {/* <p className="text-sm ">{meal + " | " + dateToSupabaseString(date)}</p> */}
           </CardContent>
         </Card>
