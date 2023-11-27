@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/card";
 import { supabase } from "@/supabaseClient";
 import { MdOutlinePeople } from "react-icons/md";
-import { Separator } from "@/components/ui/separator";
+
 
 const FormSchema = z.object({
   name: z.string().min(2, {
@@ -198,15 +198,15 @@ const Registration = ({ session }: { session: AuthSession }) => {
       </Card>
 
       <div className="relative w-full">
-      <div className="absolute inset-0 flex items-center">
-        <span className="w-full border-t" />
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">
+            Statistics
+          </span>
+        </div>
       </div>
-      <div className="relative flex justify-center text-xs uppercase">
-        <span className="bg-background px-2 text-muted-foreground">
-         Statistics
-        </span>
-      </div>
-    </div>
       <div className="w-full flex flex-row flex-wrap items-center justify-around gap-4">
         <Card className="flex grow flex-col items-start">
           <CardHeader className="flex w-full flex-row items-center gap-2 justify-between space-y-0 pb-2">

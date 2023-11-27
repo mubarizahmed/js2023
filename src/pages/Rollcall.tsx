@@ -14,12 +14,39 @@ import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { supabase } from "@/supabaseClient";
 import { AuthSession } from "@supabase/supabase-js";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { MdRestaurant } from "react-icons/md";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+const dateToSupabaseString = (date: Date) => {
+  return (
+    date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
+  );
+};
 
 const Rollcall = ({ session }: { session: AuthSession }) => {
   const [result, setResult] = useState("");
   const [meal, setMeal] = useState("");
   const [date, setDate] = React.useState<Date>();
   const [status, setStatus] = useState(0);
+  const [served, setServed] = useState(0);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const statusData = [
     {
       icon: "🔍",
@@ -54,6 +81,12 @@ const Rollcall = ({ session }: { session: AuthSession }) => {
     {
       icon: "❌",
       title: "Failed",
+      message: "Attendee not registered.",
+      color: "error",
+    },
+    {
+      icon: "❌",
+      title: "Failed",
       message: "Unknown error in processing request.",
       color: "error",
     },
@@ -83,20 +116,45 @@ const Rollcall = ({ session }: { session: AuthSession }) => {
       {
         attendee_id: id,
         meal: meal,
-        date: date.toISOString().slice(0, 10),
+        date: dateToSupabaseString(date),
       },
     ]);
     if (error) {
       console.log(error);
       if (error.code == "23505") {
         setStatus(4);
-      } else {
+      } else if (error.code == "23503") {
         setStatus(5);
+      } else {
+        setStatus(6);
       }
     } else {
       setStatus(2);
+      getServed();
     }
   };
+
+  const getServed = async () => {
+    // console.log(meal, dateToSupabaseString(date), date.toISOString().slice(0,10), date);
+    const { data, error } = await supabase
+      .from("meals")
+      .select("*")
+      .eq("meal", meal)
+      .eq("date", dateToSupabaseString(date));
+
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data);
+      setServed(data.length);
+    }
+  };
+
+  useEffect(() => {
+    if (meal != "" && date != undefined) {
+      getServed();
+    }
+  }, [meal, date]);
 
   useEffect(() => {
     console.log(session.user);
@@ -153,6 +211,7 @@ const Rollcall = ({ session }: { session: AuthSession }) => {
               selected={date}
               onSelect={setDate}
               initialFocus
+              ISOWeek
             />
           </PopoverContent>
         </Popover>
@@ -173,6 +232,47 @@ const Rollcall = ({ session }: { session: AuthSession }) => {
         >
           {on ? "🔦" : "🔅"}
         </Button>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute bottom-16 right-4"
+            >
+              #
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+          <form
+            onSubmit={(event) => {
+              // console.log(event);
+              insertData(parseInt(event.target[0].value));
+              setResult("JS23-"+event.target[0].value.padStart(4, "0"));
+              setDialogOpen(false);
+              event.preventDefault();
+            }}
+          >
+            <DialogHeader>
+              <DialogTitle>Manual ID Entry</DialogTitle>
+              <DialogDescription>
+                Enter the JALSA ID manually and click submit. Ensure that the
+                meal type and date are correctly selected.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  ID
+                </Label>
+                <Input type="number" id="id" defaultValue="0001" onChange={(e)=> {console.log(e)}} className="col-span-3" />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit" >Submit</Button>
+            </DialogFooter>
+          </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Alert className={"bg-" + statusData[status].color}>
@@ -183,6 +283,30 @@ const Rollcall = ({ session }: { session: AuthSession }) => {
         <AlertTitle>{statusData[status].title}</AlertTitle>
         <AlertDescription>{statusData[status].message}</AlertDescription>
       </Alert>
+
+      <div className="relative w-full">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">
+            Statistics
+          </span>
+        </div>
+      </div>
+      <div className="w-full flex flex-row flex-wrap items-center justify-around gap-4">
+        <Card className="flex grow flex-col items-start">
+          <CardHeader className="flex w-full flex-row items-center gap-2 justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Served</CardTitle>
+            <MdRestaurant />
+          </CardHeader>
+          <CardContent className="flex flex-row w-full items-center justify-between gap-2">
+            <div className="text-2xl font-bold">{served}</div>
+            <div className="text-2xl text-muted-foreground">{"/" + 1754}</div>
+            {/* <p className="text-sm ">{meal + " | " + dateToSupabaseString(date)}</p> */}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
