@@ -201,6 +201,7 @@ const Rollcall = () => {
               setResult("");
             }
           }}
+          onClick={playDoubleBeep}
         >
           <ToggleGroupItem value="Breakfast">B</ToggleGroupItem>
           <ToggleGroupItem value="Lunch">L</ToggleGroupItem>
