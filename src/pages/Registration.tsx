@@ -25,7 +25,11 @@ import {
 import { supabase } from "@/supabaseClient";
 import { MdOutlinePeople } from "react-icons/md";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
+import "./registration.css";
+import { regionOptions, jamaatOptions } from "./regionOptions";
 const FormSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
@@ -54,6 +58,7 @@ const Registration = () => {
   const [men, setMen] = useState(true);
   const [stats, setStats] = useState([]);
   const [regionStats, setRegionStats] = useState([]);
+  const [selectedRegion, setSelectedRegion] = useState(-1);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -105,6 +110,7 @@ const Registration = () => {
         variant: "success",
       });
       form.reset();
+      getStats();
     }
   }
 
@@ -185,16 +191,26 @@ const Registration = () => {
               />
               <FormField
                 control={form.control}
-                name="jamaat"
+                name="region"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex justify-between flex-wrap items-baseline gap-4 w-full">
-                      <FormLabel className="w-14 text-left">Jamaat</FormLabel>
+                    <div className="flex justify-between flex-wrap items-center gap-4 w-full">
+                      <FormLabel className="w-14 text-left">Region</FormLabel>
                       <FormControl>
-                        <Input
-                          className=" grow min-w-[12rem] w-fit"
-                          placeholder="Jamaat"
-                          {...field}
+                        <Select
+                          className="bg-background grow min-w-[12rem] w-fit"
+                          unstyled
+                          classNamePrefix="react-select"
+                          options={regionOptions}
+                          onChange={(val) => {
+                            setSelectedRegion(val.index);
+                            field.onChange(val.value);
+                          }}
+                          value={{
+                            value: field.value,
+                            label: field.value,
+                            index: -1,
+                          }}
                         />
                       </FormControl>
                     </div>
@@ -204,16 +220,25 @@ const Registration = () => {
               />
               <FormField
                 control={form.control}
-                name="region"
+                name="jamaat"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex justify-between flex-wrap items-baseline gap-4 w-full">
-                      <FormLabel className="w-14 text-left">Region</FormLabel>
+                    <div className="flex justify-between flex-wrap items-center gap-4 w-full">
+                      <FormLabel className="w-14 text-left">Jamaat</FormLabel>
                       <FormControl>
-                        <Input
-                          className=" grow min-w-[12rem] w-fit"
-                          placeholder="Region"
-                          {...field}
+                        <CreatableSelect
+                          className="bg-background grow min-w-[12rem] w-fit"
+                          unstyled
+                          classNamePrefix="react-select"
+                          options={
+                            selectedRegion == -1
+                              ? []
+                              : jamaatOptions[selectedRegion]
+                          }
+                          onChange={(val) => {
+                            field.onChange(val.value);
+                          }}
+                          value={{ value: field.value, label: field.value }}
                         />
                       </FormControl>
                     </div>
@@ -343,9 +368,7 @@ const Registration = () => {
                 className="flex flex-row border items-center justify-between p-2 rounded-md"
               >
                 <div className="text-sm font-medium">{stat.region}</div>
-                <div className="text-sm font-medium">
-                  {stat.num_attendees}
-                </div>
+                <div className="text-sm font-medium">{stat.num_attendees}</div>
               </div>
             ))}
           </CardContent>
