@@ -9,43 +9,54 @@ import { supabase } from "./supabaseClient.ts";
 import { AuthSession } from "@supabase/supabase-js";
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
+import {useUser} from "./hooks/AuthContext.tsx";
 
 function App() {
-  const [session, setSession] = useState<AuthSession>(null);
-  const [loaded, setLoaded] = useState(false);
-  const [admin, setAdmin] = useState(false);
+  // const [session, setSession] = useState<AuthSession>(null);
+  // const [loaded, setLoaded] = useState(false);
+  // const [admin, setAdmin] = useState(false);
 
+  const { user, session, admin } = useUser();
   // set dark theme on page load
   document.body.classList.add("dark");
 
-  useEffect(() => {
-    console.log("connecting");
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log(session);
+  // useEffect(() => {
+  //   console.log("connecting");
+  //   supabase.auth.getSession().then(({ data: { session: ses } }) => {
+  //     console.log(ses);
+  //     getUser();
+  //     setSession(ses);
+  //   });
+  // }, []);
 
-      getUser();
+  // supabase.auth.onAuthStateChange((_event, session) => {
+  //   setSession(session);
+  //   if (_event == 'SIGNED_IN') {
+  //     console.log('USER_UPDATED', session)
+  //     getUser();
+  //   }
+  // });
 
-      setSession(session);
-    });
+  // const getUser = () => {
+  //   supabase.from("users").select("*").then(( {data, error} ) => {
+  //     if (error) {
+  //       console.log(error);
+  //     } else {
+  //       console.log(data);
+  //       setAdmin(data[0].admin)
+  //     }
+  //   })
+    
+  //   setLoaded(true);
+  // };
+
+
+  useEffect(()=>{
+    // getUser();
+    console.log(session);
   }, []);
 
-  supabase.auth.onAuthStateChange((_event, session) => {
-    setSession(session);
-    getUser();
-  });
 
-  const getUser = () => {
-    supabase.from("users").select("*").then(( {data, error} ) => {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log(data);
-        setAdmin(data[0].admin)
-      }
-    })
-
-    setLoaded(true);
-  };
 
   return (
     <>
@@ -56,7 +67,7 @@ function App() {
           <Navbar session={session} admin={admin} />
           <Routes>
             <Route path="/" element={<Rollcall />} />
-            {admin ? <Route path="/registration" element={<Registration/>} /> : loaded ? "" : <Route path="/registration" />}
+            {admin ? <Route path="/registration" element={<Registration/>} /> :  <Route path="/registration" />}
             <Route path="*" element={<NoPage />} />
           </Routes>
         </>
