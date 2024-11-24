@@ -109,6 +109,7 @@ const Rollcall = () => {
         setStatus(2);
         insertData(parseInt(res.getText().slice(5)));
       } else {
+        playDoubleBeep();
         setStatus(3);
       }
     },

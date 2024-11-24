@@ -111,6 +111,7 @@ const Security = () => {
         setStatus(2);
         getRegistration(parseInt(res.getText().slice(3)));
       } else {
+        playDoubleBeep();
         setStatus(3);
       }
     },
