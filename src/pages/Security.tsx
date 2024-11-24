@@ -125,14 +125,12 @@ const Security = () => {
 
     if (error || data.length == 0) {
       playDoubleBeep();
-      // console.log(data);
-      // console.log(error);
       if (data.length == 0 ) {
-        setStatus(3);
+        setStatus(4);
       } else if (error.code == "23503") {
-        setStatus(4);
+        setStatus(5);
       } else {
-        setStatus(4);
+        setStatus(5);
       }
     } else {
       playBeep();
