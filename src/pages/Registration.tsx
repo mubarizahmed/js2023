@@ -31,6 +31,9 @@ import CreatableSelect from "react-select/creatable";
 
 import "./registration.css";
 import { regionOptions, jamaatOptions } from "./regionOptions";
+import { Database } from "../supabase"; 
+type OrgEnum = Database["public"]["Enums"]["org"];
+
 const FormSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
@@ -55,6 +58,19 @@ const FormSchema = z.object({
   chair: z.boolean()
 });
 
+function stringToEnum(value: string): OrgEnum | null {
+  // Define the valid values of the enum
+  const validValues: OrgEnum[] = ["Khuddam", "Ansar", "Atfal", "Lajna", "Nasirat"];
+
+  // Check if the input string is a valid enum value
+  if (validValues.includes(value as OrgEnum)) {
+    return value as OrgEnum;
+  }
+
+  // Return null if the string doesn't match any enum value
+  return null;
+}
+
 const Registration = () => {
   const [loaded, setLoaded] = useState(false);
   const [men, setMen] = useState(true);
@@ -75,12 +91,16 @@ const Registration = () => {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log(data);
+
+    // create new enum variable
+    const enumValue = stringToEnum(data.org);
+
     const { error } = await supabase.from("attendees").insert([
       {
         name: data.name,
         jamaat: data.jamaat,
         region: data.region,
-        org: data.org,
+        org: enumValue,
         id: data.id,
         chair: data.chair
       },
