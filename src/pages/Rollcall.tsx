@@ -103,7 +103,7 @@ const Rollcall = () => {
     onDecodeResult(res) {
       if (res.getText() == result) return;
       setResult(res.getText());
-      const regex = /^JS23-\d{4}$/;
+      const regex = /^JS-\d{4}$/;
 
       if (regex.test(res.getText())) {
         setStatus(2);
@@ -265,7 +265,7 @@ const Rollcall = () => {
             onSubmit={(event) => {
               // console.log(event);
               insertData(parseInt(event.target[0].value));
-              setResult("JS23-"+event.target[0].value.padStart(4, "0"));
+              setResult("JS-"+event.target[0].value.padStart(4, "0"));
               setDialogOpen(false);
               event.preventDefault();
             }}
