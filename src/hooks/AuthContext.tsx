@@ -4,16 +4,18 @@ import { Session, User } from '@supabase/supabase-js';
 
 import { supabase } from '../supabaseClient';
 
-export const AuthContext = createContext<{ user: User | null; session: Session | null; admin: boolean }>({
+export const AuthContext = createContext<{ user: User | null; session: Session | null; admin: boolean; food: boolean }>({
   user: null,
   session: null,
   admin: false,
+  food: false,
 });
 
 export const AuthContextProvider = (props: any) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [admin, setAdmin] = useState(false);
+  const [food, setFood] = useState(false)
 
   const getUser = () => {
     supabase.from("users").select("*").then(( {data, error} ) => {
@@ -22,6 +24,7 @@ export const AuthContextProvider = (props: any) => {
       } else {
         console.log(data);
         setAdmin(data[0].admin)
+        setFood(data[0].food)
       }
     })
   }
@@ -53,6 +56,7 @@ export const AuthContextProvider = (props: any) => {
     session,
     user,
     admin,
+    food
   };
   return <AuthContext.Provider value={value} {...props} />;
 };

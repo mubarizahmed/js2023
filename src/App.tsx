@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import Navbar from "./components/Navbar.tsx";
 import Rollcall from "./pages/Rollcall.tsx";
+import Security from "./pages/Security.tsx";
 import Login from "./pages/Login.tsx";
 import Registration from "./pages/Registration.tsx";
 import NoPage from "./pages/NoPage.tsx";
@@ -16,7 +17,7 @@ function App() {
   // const [loaded, setLoaded] = useState(false);
   // const [admin, setAdmin] = useState(false);
 
-  const { user, session, admin } = useUser();
+  const { user, session, admin, food } = useUser();
   // set dark theme on page load
   document.body.classList.add("dark");
 
@@ -64,10 +65,11 @@ function App() {
         <Login />
       ) : (
         <>
-          <Navbar session={session} admin={admin} />
+          <Navbar session={session} admin={admin} food={food}/>
           <Routes>
-            <Route path="/" element={<Rollcall />} />
+            <Route path="/" element={<Security />} />
             {admin ? <Route path="/registration" element={<Registration/>} /> :  <Route path="/registration" />}
+            {admin ? <Route path="/meals" element={<Rollcall />} /> :  <Route path="/meals" />}
             <Route path="*" element={<NoPage />} />
           </Routes>
         </>

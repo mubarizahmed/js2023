@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { supabase } from "@/supabaseClient";
 
-const Navbar = ({ session, admin }: { session: AuthSession; admin: boolean }) => {
+const Navbar = ({ session, admin, food }: { session: AuthSession; admin: boolean; food: boolean }) => {
 
 
   return (
@@ -34,8 +34,11 @@ const Navbar = ({ session, admin }: { session: AuthSession; admin: boolean }) =>
             {({ isActive }) => <Toggle pressed={isActive}>Registration</Toggle>}
           </NavLink> : ""}
           <NavLink to="/">
-            {({ isActive }) => <Toggle pressed={isActive}>Meals</Toggle>}
+            {({ isActive }) => <Toggle pressed={isActive}>Security</Toggle>}
           </NavLink>
+          { food ?         <NavLink to="/meals">
+            {({ isActive }) => <Toggle pressed={isActive}>Meals</Toggle>}
+          </NavLink> : ""}
         </div>
         <div className="navbar-right flex flex-row gap-2">
           <Button

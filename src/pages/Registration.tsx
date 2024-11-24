@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -51,6 +52,7 @@ const FormSchema = z.object({
     .max(9999, {
       message: "ID must be at most 4 characters.",
     }),
+  chair: z.boolean()
 });
 
 const Registration = () => {
@@ -67,6 +69,7 @@ const Registration = () => {
       region: "",
       org: "",
       id: 0,
+      chair: false,
     },
   });
 
@@ -79,6 +82,7 @@ const Registration = () => {
         region: data.region,
         org: data.org,
         id: data.id,
+        chair: data.chair
       },
     ]);
     if (error) {
@@ -311,6 +315,27 @@ const Registration = () => {
                       </FormControl>
                     </div>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* check box */}
+              <FormField
+                control={form.control}
+                name="chair"
+                render={({ field }) => (
+                  <FormItem >
+                    <div className="flex flex-wrap items-center gap-4 min-h-10 w-full">
+                    <FormLabel className="w-14 text-left">
+                        Chair
+                      </FormLabel>
+                    <FormControl>
+                      <Checkbox
+                        // className=" grow min-w-[12rem] w-fit"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    </div>
                   </FormItem>
                 )}
               />
