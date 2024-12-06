@@ -69,7 +69,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Security />} />
             {admin ? <Route path="/registration" element={<Registration/>} /> :  <Route path="/registration" />}
-            {admin ? <Route path="/meals" element={<Rollcall />} /> :  <Route path="/meals" />}
+            {food ? <Route path="/meals" element={<Rollcall />} /> :  <Route path="/meals" />}
             <Route path="*" element={<NoPage />} />
           </Routes>
         </>
