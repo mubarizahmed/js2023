@@ -107,7 +107,7 @@ const Rollcall = () => {
 
       if (regex.test(res.getText())) {
         setStatus(2);
-        insertData(parseInt(res.getText().slice(5)));
+        insertData(parseInt(res.getText().slice(3)));
       } else {
         playDoubleBeep();
         setStatus(3);
