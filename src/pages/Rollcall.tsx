@@ -9,7 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { MdCalendarMonth } from "react-icons/md";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { supabase } from "@/supabaseClient";
@@ -46,7 +46,13 @@ const Rollcall = () => {
   const [meal, setMeal] = useState("");
   const [date, setDate] = React.useState<Date>();
   const [status, setStatus] = useState(0);
-  const [served, setServed] = useState(0);
+  const [served, setServed] = useState<{
+    date: string;
+    meal: string;
+    men_count: number;
+    total_attendees: number;
+    women_count: number;
+  } | null>(null);
   const [attendees, setAttendees] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [playBeep] = useSound(beep);
@@ -141,30 +147,46 @@ const Rollcall = () => {
     }
   };
 
-  const getServed = async () => {
-    // console.log(meal, dateToSupabaseString(date), date.toISOString().slice(0,10), date);
+  // const getServed = async () => {
+  //   // console.log(meal, dateToSupabaseString(date), date.toISOString().slice(0,10), date);
+  //   const { data, error } = await supabase
+  //     .from("meals")
+  //     .select("*")
+  //     .eq("meal", meal)
+  //     .eq("date", dateToSupabaseString(date));
+
+  //   if (error) {
+  //     console.log(error);
+  //   } else {
+  //     console.log(data);
+  //     setServed(data.length);
+  //   }
+
+  //   const {count: attendeeData, error: attendeeError} = await supabase.from("attendees").select("*", {count: "exact", head: false});
+
+  //   if (attendeeError) {
+  //     console.log(attendeeError);
+  //   } else {
+  //     console.log(attendeeData);
+  //     setAttendees(attendeeData);
+  //   }
+  // };
+
+  async function getServed() {
     const { data, error } = await supabase
-      .from("meals")
+      .from("meals_summary")
       .select("*")
       .eq("meal", meal)
       .eq("date", dateToSupabaseString(date));
 
-    if (error) {
+    if (error || data.length == 0) {
       console.log(error);
+      setServed({men_count: 0, women_count: 0, total_attendees: 0, date: dateToSupabaseString(date), meal: meal});
     } else {
       console.log(data);
-      setServed(data.length);
+      setServed(data[0] || null);
     }
-
-    const {count: attendeeData, error: attendeeError} = await supabase.from("attendees").select("*", {count: "exact", head: false});
-
-    if (attendeeError) {
-      console.log(attendeeError);
-    } else {
-      console.log(attendeeData);
-      setAttendees(attendeeData);
-    }
-  };
+  }
 
   useEffect(() => {
     if (meal != "" && date != undefined) {
@@ -320,9 +342,16 @@ const Rollcall = () => {
             <MdRestaurant />
           </CardHeader>
           <CardContent className="flex flex-row w-full items-center justify-between gap-2">
-            <div className="text-2xl font-bold">{served}</div>
-            <div className="text-2xl text-muted-foreground">{"/" + attendees}</div>
-            {/* <p className="text-sm ">{meal + " | " + dateToSupabaseString(date)}</p> */}
+            <div className="text-2xl font-bold">{served ? served.men_count + served.women_count: "0"}</div>
+            <div className="text-2xl text-muted-foreground">{"/" + (served ? served.total_attendees : "0")}</div>
+          </CardContent>
+          <CardHeader className="flex w-full flex-row items-center gap-2 justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Gents</CardTitle>
+            <CardTitle className="text-sm font-medium">Ladies</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-row w-full items-center justify-between gap-2">
+            <div className="text-2xl font-bold">{served ? served.men_count : "0"}</div>
+            <div className="text-2xl font-bold">{served ? served.women_count : "0"}</div>
           </CardContent>
         </Card>
       </div>

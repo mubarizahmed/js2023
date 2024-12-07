@@ -108,6 +108,30 @@ export type Database = {
           },
         ]
       }
+      meals_summary: {
+        Row: {
+          date: string | null
+          meal: string | null
+          men_count: number | null
+          total_attendees: number | null
+          women_count: number | null
+        }
+        Insert: {
+          date?: string | null
+          meal?: string | null
+          men_count?: number | null
+          total_attendees?: number | null
+          women_count?: number | null
+        }
+        Update: {
+          date?: string | null
+          meal?: string | null
+          men_count?: number | null
+          total_attendees?: number | null
+          women_count?: number | null
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           admin: boolean
